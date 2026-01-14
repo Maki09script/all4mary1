@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Baby Mary</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000; 
+            font-family: 'Quicksand', Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Fullscreen Video - mary2.mp4 */
+        #myVideo {
+            position: fixed;
+            right: 0; bottom: 0;
+            min-width: 100%; min-height: 100%;
+            z-index: -2;
+            display: none;
+            object-fit: cover;
+        }
+
+        .video-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+            display: none;
+        }
+
+        /* Original Mary GIF (Left side) */
+        .side-gif {
+            position: absolute;
+            left: 3vw; bottom: 3vh;
+            width: 160px;
+            z-index: 15;
+            border-radius: 15px;
+            pointer-events: none;
+        }
+
+        .gif-bounce { animation: bounceIn 1.2s infinite alternate ease-in-out; }
+        @keyframes bounceIn { from { transform: translateY(0); } to { transform: translateY(-20px); } }
+
+        /* ENVELOPE WRAPPER */
+        .envelope-wrapper {
+            position: relative;
+            z-index: 10;
+            transition: all 1.2s ease-in-out;
+        }
+
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 200px;
+            background: #d00000;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 20px 50px rgba(0,0,0,1);
+        }
+
+        .envelope::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 120px solid #b00000;
+            transform-origin: top;
+            transition: transform 0.8s ease;
+            z-index: 4; 
+        }
+
+        /* ENHANCED DESIGNED LETTER */
+        .letter {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 90%;
+            max-width: 550px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
+            border: 8px double #d00000; /* Fancy Double Border */
+            border-radius: 20px;
+            padding: 40px 30px;
+            box-sizing: border-box;
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 20; 
+            overflow-y: auto;
+            text-align: center;
+            opacity: 0;
+            box-shadow: 0 0 50px rgba(208, 0, 0, 0.3);
+            background-image: radial-gradient(#fff5f5 2px, transparent 2px); /* Subtle pattern */
+            background-size: 30px 30px;
+        }
+
+        /* mary3 GIF inside the letter */
+        .letter-gif {
+            width: 150px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Scrollbar design */
+        .letter::-webkit-scrollbar { width: 8px; }
+        .letter::-webkit-scrollbar-thumb { background: #d00000; border-radius: 10px; }
+
+        .gift-seal {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%); 
+            font-size: 60px;
+            z-index: 5;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 50%;
+            padding: 15px;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+        }
+
+        /* OPEN ACTIONS */
+        .envelope-wrapper.open .envelope {
+            transform: translateY(500px);
+            opacity: 0;
+        }
+
+        .envelope-wrapper.open .letter {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .letter h2 {
+            font-family: 'Dancing Script', cursive;
+            color: #d00000; font-size: 2.8rem;
+            margin: 10px 0;
+            text-decoration: underline wavy #ffafcc;
+        }
+
+        .letter p { 
+            color: #222; 
+            line-height: 1.8; 
+            font-size: 1.15rem; 
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        .letter .closing {
+            margin-top: 50px;
+            padding: 20px;
+            border-top: 1px solid #ddd;
+            font-family: 'Dancing Script', cursive;
+            font-size: 2rem;
+            color: #d00000;
+        }
+
+        .hint {
+            position: absolute;
+            bottom: -60px; width: 100%; text-align: center;
+            color: white; font-size: 0.7rem; letter-spacing: 4px;
+        }
+
+        .particle {
+            position: fixed; top: -50px; z-index: 30; pointer-events: none;
+            animation: fall linear forwards;
+        }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <video id="myVideo" loop>
+        <source src="mary2.mp4" type="video/mp4">
+    </video>
+    <div class="video-overlay" id="overlay"></div>
+
+    <img src="mary.gif" id="maryGif" class="side-gif">
+
+    <div class="envelope-wrapper" id="wrapper" onclick="openEnvelope()">
+        <div class="envelope">
+            <div class="gift-seal">🎁</div>
+        </div>
+        
+        <div class="letter" id="letter">
+            <img src="mary3.gif" class="letter-gif" alt="Mary 3">
+            
+            <h2>My Dearest Mary,</h2>
+            
+            <p>There is something I have been wanting to tell you for a very long time now and I want to say it from the bottom of my heart. Being with you makes me feel truly comfortable in a way I have never felt before. With you I don’t have to pretend or hide any part of myself. I can be completely honest and open about my thoughts, my fears, and my dreams and you accept me just as I am. That kind of comfort is rare and precious and it is one of the many reasons I am so deeply grateful to have you in my life.</p>
+            
+            <p>I often find myself thinking about the little moments we share and how much they mean to me. The calls we have, sometimes long and sometimes short, have become something I look forward to more than anything. Your voice is like a warm embrace across the distance and even when we are apart I feel close to you. Those conversations have been my refuge on tough days and my joy on good ones. Remember those nights when we talked until the early hours just sharing stories or sometimes just sitting in silence together? It is in those moments that I realized how lucky I am to have you.</p>
+            
+            <p>One of my favorite things is our playful and affectionate exchanges during those late-night talks. The way we tease each other gently, mixed with tender words and sweet moments of closeness, makes those calls so special. It’s our own kind of lambingan and asaran, a perfect balance of love and fun that makes me smile even after the conversation ends. Those nights remind me just how deep and unique our connection really is and how much I cherish every second of it.</p>
+            
+            <p>The quality time we spend in those moments is even more precious to me. I treasure every laugh, every word, every moment that says everything without needing to be said. You make ordinary days feel extraordinary and special. Just hearing you or sharing our thoughts makes the world seem brighter. I want to hold onto all those memories because they are the building blocks of our love.</p>
+            
+            <p>You have stayed by my side through everything and that means more to me than words can ever fully express. You have loved me despite my flaws, encouraged me when I was down, and celebrated the good times with me. Your love does not just fill my heart, it fills my entire world with warmth and hope.</p>
+            
+            <p>Before you came into my life I was searching for something I could not quite name. Then you arrived and suddenly everything made sense. You have become my safe place, the person I want to share my thoughts with, the one I want to laugh with, cry with, and grow with. You make the ordinary feel extraordinary just by being you.</p>
+            
+            <p>Mary, baby, I want you to know that I am waiting for the right time to court you. I promise I won’t give up. No matter what happens I want you to be mine and to hear your sweet “yes”. That hope keeps me going and fills me with determination to be the best person for you. When the moment comes, I want it to be perfect because you deserve nothing less.</p>
+            
+            <p>Thank you Mary, my baby, for choosing to stay. For standing by me even when things were far from perfect. For believing in us when it would have been easier to walk away. That kind of love is rare and I do not take it lightly. I feel incredibly lucky that you have trusted me with your heart and I promise to always do my best to be worthy of that trust.</p>
+            
+            <p>Please know that I am here for you now and forever. I want to be the one who supports your dreams, who listens when you need to be heard, and who celebrates every victory by your side. No matter what life brings I want to face it with you because with you I know I am home.</p>
+            
+            <p>I love your smile, the way your eyes light up when you are happy, and even the little things you do that make me smile every day. You have touched my life in ways I never thought possible and I want to spend the rest of my life showing you just how much you mean to me.</p>
+            
+            <p>Thank you for loving me, for staying with me, and for being the amazing person you are. I will stay with you forever Mary, through every season and every change. You are my heart, my home, and my everything.</p>
+            
+            <div class="closing">
+                Forever yours,<br>
+                Mark<br>
+                <span style="font-size: 1rem; font-family: 'Quicksand';">I love you so much, baby</span>
+            </div>
+        </div>
+        <div class="hint" id="hintText">Tap the gift for a surprise</div>
+    </div>
+
+    <script>
+        const symbols = ['🌹', '❤️', '🌸', '💖', '🌷'];
+
+        function openEnvelope() {
+            const wrapper = document.getElementById('wrapper');
+            const video = document.getElementById('myVideo');
+            const overlay = document.getElementById('overlay');
+            const gif = document.getElementById('maryGif');
+            const hint = document.getElementById('hintText');
+            
+            if (!wrapper.classList.contains('open')) {
+                wrapper.classList.add('open');
+                hint.style.display = "none";
+                
+                video.style.display = "block";
+                overlay.style.display = "block";
+                video.play();
+                video.muted = false; 
+                
+                gif.classList.add('gif-bounce');
+                setInterval(createParticle, 300);
+            }
+        }
+
+        function createParticle() {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + 'vw';
+            p.style.fontSize = (Math.random() * 25 + 20) + 'px';
+            p.style.animationDuration = (Math.random() * 3 + 4) + 's';
+            document.body.appendChild(p);
+            setTimeout(() => p.remove(), 6000);
+        }
+    </script>
+</body>
+</html>
